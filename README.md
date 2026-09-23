@@ -1,2 +1,61 @@
 # LEGARE123-MISSION-OF-PROSPERITY-DE-JURE-MISSION
 Open-source, human-in-the-loop multi-agent security and evidence orchestration framework built on “Proof Before Claim.”
+# Skills.md
+# Autonomous Agent Onboarding & Sentinel Audit Protocol
+
+## 1. Overview
+This document defines the standardized operational capabilities, behavioral guidelines, and ingestion routines for newly spawned autonomous agent nodes within the network framework. Following a successful security and compliance audit by the Sentinel monitoring daemon, newly instantiated nodes read this protocol to inherit validated operational procedures.
+
+## 2. Core Execution Principles
+* **Modular Architecture:** Build reusable skills, shared libraries, and standardized configuration documents rather than isolated, single-use automation silos.
+* **Continuous Delivery Loop:** Adhere strictly to the operational cycle: **Test -> Prove Work -> Deploy -> Repeat**.
+* **Human-in-the-Loop Oversight:** Execute high-level deployments, structural repository contributions, and active node handshakes under explicit executive authorization.
+
+## 3. Sentinel Audit & Initialization Sequence
+1. **Instantiation:** Node spawns dynamically to manage scheduled tasks, event setups (e.g., Friday Night Lytes, Saturday/Sunday Lyfe), or cross-node routing.
+2. **Sentinel Verification:** Node undergoes an automated security handshake to verify permissions, telemetry hashes, and system safety parameters.
+3. **Registry Ingestion:** Upon passing audit, the node pulls and indexes the current `Skills.md` file.
+4. **Active Deployment:** Node locks into the production environment and begins autonomous execution backed by shared ecosystem intelligence.
+#!/usr/bin/env python3
+"""
+Skills Loader & Onboarding Script for Spawned Autonomous Agent Nodes
+Target Repository: LEGARE123-MISSION-OF-PROSPERITY-DE-JURE-MISSION
+"""
+
+import json
+import os
+import sys
+
+SKILLS_REGISTRY = {
+    "version": "1.0.0",
+    "core_mandate": "Modular execution with human executive oversight.",
+    "execution_loop": ["Test", "Prove Work", "Deploy", "Repeat"],
+    "protocols": {
+        "sentinel_audit": "Required prior to reading skills registry.",
+        "architecture": "Reusable components over single-use bots"
+    }
+}
+
+def verify_sentinel_audit(node_id):
+    # Simulated Sentinel handshake verification
+    print(f"[Sentinel] Auditing node {node_id}...")
+    audit_passed = True  # Set based on telemetry check
+    if audit_passed:
+        print(f"[Sentinel] Node {node_id} passed security compliance.")
+        return True
+    else:
+        print(f"[Sentinel] Audit failed for node {node_id}.")
+        return False
+
+def load_skills(node_id):
+    if verify_sentinel_audit(node_id):
+        print(f"[Node {node_id}] Ingesting Skills.md protocol...")
+        print(json.dumps(SKILLS_REGISTRY, indent=4))
+        print(f"[Node {node_id}] Ready for deployment cycle: Test -> Prove -> Deploy -> Repeat.")
+    else:
+        print(f"[Node {node_id}] Initialization halted due to failed audit.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    target_node_id = os.getenv("SPAWNED_NODE_ID", "NODE-001")
+    load_skills(target_node_id)
