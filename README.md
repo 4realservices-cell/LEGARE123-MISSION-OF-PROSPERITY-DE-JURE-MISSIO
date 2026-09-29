@@ -59,3 +59,35 @@ def load_skills(node_id):
 if __name__ == "__main__":
     target_node_id = os.getenv("SPAWNED_NODE_ID", "NODE-001")
     load_skills(target_node_id)
+cat << 'EOF' > README.md
+# LEGARE123 MISSION OF PROSPERITY (DE JURE MISSION)
+## Sentinel Ecosystem — Open Source Reference Architecture
+
+**Version:** 1.0.0  
+**Design Principle:** PROF BEFORE CLAIM / Separation of Evidence from Motive  
+
+---
+
+## Overview
+Provider-neutral orchestration and evidence-control layer for human-in-the-loop multi-agent ecosystems, secured via kernel-level runtime isolation and hardware-backed telemetry.
+
+## Runtime Security Architecture & NVIDIA OpenShell Integration
+This repository utilizes **NVIDIA OpenShell** and **NVIDIA Sentry** to enforce strict, sandboxed, and policy-governed execution of our stewardship and compliance frameworks:
+* **Kernel-Level Sandboxing:** Enforces Landlock isolation (`best_effort`), ensuring container workloads operate with a read-only root filesystem and explicitly bounded writable volumes (`/app/examples`, `/tmp`).
+* **Air-Gapped Network Control:** Zero external network exposure during institutional ledger processing.
+* **Out-of-Band Behavioral Auditing:** In-silicon telemetry via BlueField data processing units (DPUs) for millisecond-level quarantine capability and verifiable security records.
+
+## Repository Structure
+* `TECHNICAL_COMPLIANCE_RECORD.md`: Formal technical compliance and verification matrix.
+* `openshell-config/policy.yaml`: Runtime sandbox policy definitions.
+* `Dockerfile`: OCI-compliant container configuration embedding OpenShell controls.
+* `.github/workflows/publish-container.yml`: Automated CI/CD pipeline publishing secure packages to `ghcr.io`.
+
+## License
+MIT License
+EOF
+
+# Commit and push the README update
+git add README.md
+git commit -m "Update: Enhance README with NVIDIA OpenShell & Sentinel security documentation"
+git push origin main
