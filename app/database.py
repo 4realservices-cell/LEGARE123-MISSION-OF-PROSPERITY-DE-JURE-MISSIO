@@ -1,8 +1,9 @@
 from sqlalchemy import create_engine, Column, String, Boolean, DateTime, JSON, Enum as SQLEnum, Integer, Text, ForeignKey
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import sessionmaker
 from datetime import datetime
+from app.base import Base
 from app.config import settings
-from app.models import AgentStatus, EvidenceStatus, ClaimStatus, UserRole
+from app.enums import AgentStatus, EvidenceStatus, ClaimStatus, UserRole
 
 engine = create_engine(
     settings.database_url,
@@ -10,7 +11,6 @@ engine = create_engine(
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
 
 
 class AgentDB(Base):

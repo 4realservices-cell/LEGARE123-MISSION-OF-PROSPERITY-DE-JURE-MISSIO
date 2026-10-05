@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Boolean, Float, DateTime, JSON
 from datetime import datetime
-from app.database import Base
+from app.base import Base
 
 
 class BiometricTelemetryModel(Base):

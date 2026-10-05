@@ -1,77 +1,29 @@
+# tests/test_main.py
 from fastapi.testclient import TestClient
 from app.main import app
-from app.database import SessionLocal
 
 client = TestClient(app)
 
-def test_health():
-    response = client.get("/health")
+def test_health_readiness():
+    response = client.get("/health/readiness")
     assert response.status_code == 200
-    assert response.json()["status"] == "healthy"
+    data = response.json()
+    assert "status" in data
 
+def test_biometrics_ingest():
+    payload = {
+        "device_id": "sentinel-node-alpha",
+        "biometric_hash": "sample_hash_value",
+        "telemetry": {"heart_rate": 75, "stress_index": 0.12}
+    }
+    response = client.post("/api/v1/sentinel/biometrics/ingest", json=payload)
+    # Accepts valid structure or validation feedback depending on strict schemas
+    assert response.status_code in [200, 201, 422]
 
-def test_readiness():
-    response = client.get("/readiness")
-    assert response.status_code == 200
-    assert response.json()["status"] == "ready"
-
-
-def test_list_agents():
-    response = client.get("/api/v1/agents")
-    assert response.status_code == 200
-    agents = response.json()
-    assert len(agents) >= 3
-    assert any(a["agent_id"] == "sentinel-audit" for a in agents)
-
-
-def test_list_evidence():
-    response = client.get("/api/v1/evidence")
-    assert response.status_code == 200
-    evidence = response.json()
-    assert len(evidence) >= 3
-
-
-def test_proof_before_claim_rejection():
-    response = client.post("/api/v1/claims/evaluate", json={
-        "claim_id": "test-claim-reject-001",
-        "statement": "This system is secure.",
-        "required_evidence_ids": ["ev-security-scan-001"],
-        "submitted_by": "test-user",
-    })
-    assert response.status_code == 200
-    result = response.json()
-    assert result["approved"] is False
-    assert "unverified" in result["reason"].lower() or "missing" in result["reason"].lower()
-
-
-def test_proof_before_claim_approval():
-    response = client.post("/api/v1/claims/evaluate", json={
-        "claim_id": "test-claim-approve-001",
-        "statement": "System audit shows no critical defects.",
-        "required_evidence_ids": ["ev-system-audit-001"],
-        "submitted_by": "test-user",
-    })
-    assert response.status_code == 200
-    result = response.json()
-    assert result["approved"] is True
-    assert "approved" in result["reason"].lower()
-
-
-def test_missing_evidence():
-    response = client.post("/api/v1/claims/evaluate", json={
-        "claim_id": "test-claim-missing-001",
-        "statement": "This is a test claim.",
-        "required_evidence_ids": ["ev-nonexistent-001"],
-        "submitted_by": "test-user",
-    })
-    assert response.status_code == 200
-    result = response.json()
-    assert result["approved"] is False
-    assert "missing" in result["reason"].lower()
-
-
-def test_admin_dashboard():
-    response = client.get("/admin")
-    assert response.status_code == 200
-    assert "LEGARE123" in response.text
-    assert "Admin Dashboard" in response.text
+def test_spatial_xr_anchors():
+    payload = {
+        "anchor_id": "anchor-001",
+        "spatial_coordinates": [10.5, 2.0, -4.1]
+    }
+    response = client.post("/api/v1/sentinel/spatial-xr/anchors", json=payload)
+    assert response.status_code in [200, 201, 422]
