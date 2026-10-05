@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
+from app.bootstrap import configure_app
 from app.config import settings
 from app.database import get_db, SessionLocal, Base, engine
 from app.database.seeder import seed_database
@@ -36,11 +37,13 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.cors_origins.split(",") if settings.cors_origins != "*" else ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+configure_app(app)
 
 Base.metadata.create_all(bind=engine)
 
