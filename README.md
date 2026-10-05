@@ -1,130 +1,219 @@
-# LEGARE123-MISSION-OF-PROSPERITY-DE-JURE-MISSION
-Open-source, human-in-the-loop multi-agent security and evidence orchestration framework built on “Proof Before Claim.”
-# Skills.md
-# Autonomous Agent Onboarding & Sentinel Audit Protocol
+# LEGARE123 Mission of Prosperity - Complete Enterprise Edition
 
-## 1. Overview
-This document defines the standardized operational capabilities, behavioral guidelines, and ingestion routines for newly spawned autonomous agent nodes within the network framework. Following a successful security and compliance audit by the Sentinel monitoring daemon, newly instantiated nodes read this protocol to inherit validated operational procedures.
+A production-ready, full-stack Python + React framework for human-in-the-loop evidence orchestration and claim validation, built on the principle of **"Proof Before Claim."**
 
-## 2. Core Execution Principles
-* **Modular Architecture:** Build reusable skills, shared libraries, and standardized configuration documents rather than isolated, single-use automation silos.
-* **Continuous Delivery Loop:** Adhere strictly to the operational cycle: **Test -> Prove Work -> Deploy -> Repeat**.
-* **Human-in-the-Loop Oversight:** Execute high-level deployments, structural repository contributions, and active node handshakes under explicit executive authorization.
+## 🚀 Complete Feature Set
 
-## 3. Sentinel Audit & Initialization Sequence
-1. **Instantiation:** Node spawns dynamically to manage scheduled tasks, event setups (e.g., Friday Night Lytes, Saturday/Sunday Lyfe), or cross-node routing.
-2. **Sentinel Verification:** Node undergoes an automated security handshake to verify permissions, telemetry hashes, and system safety parameters.
-3. **Registry Ingestion:** Upon passing audit, the node pulls and indexes the current `Skills.md` file.
-4. **Active Deployment:** Node locks into the production environment and begins autonomous execution backed by shared ecosystem intelligence.
-#!/usr/bin/env python3
-"""
-Skills Loader & Onboarding Script for Spawned Autonomous Agent Nodes
-Target Repository: LEGARE123-MISSION-OF-PROSPERITY-DE-JURE-MISSION
-"""
+### Backend (Python/FastAPI)
+- ✅ **JWT Authentication** - Secure token-based auth with bcrypt password hashing
+- ✅ **Role-Based Access Control (RBAC)** - Admin, Operator, Viewer roles with fine-grained permissions
+- ✅ **Audit Logging** - Immutable audit trail for compliance and security
+- ✅ **Claim Timeline** - Complete event history for each claim
+- ✅ **Evidence Management** - Verification pipeline with status tracking
+- ✅ **Agent Lifecycle** - Registration, activation, pause, retirement
+- ✅ **Workflow Engine** - Multi-step approval workflows
+- ✅ **Database Agnostic** - SQLite for dev, PostgreSQL for production
+- ✅ **API Documentation** - Auto-generated OpenAPI/Swagger docs
 
-import json
-import os
-import sys
+### Frontend (React + Vite)
+- ✅ **Secure Login** - JWT token management and session persistence
+- ✅ **Protected Routes** - Role-based access to UI components
+- ✅ **Dashboard** - Real-time system overview and metrics
+- ✅ **Claim Timeline UI** - Visual event history with actor tracking
+- ✅ **Evidence Management** - Browse, filter, and manage evidence
+- ✅ **Agent Management** - View and manage agent lifecycles
+- ✅ **Permissions Panel** - Role and permission documentation
+- ✅ **Responsive Design** - Works on desktop and mobile
 
-SKILLS_REGISTRY = {
-    "version": "1.0.0",
-    "core_mandate": "Modular execution with human executive oversight.",
-    "execution_loop": ["Test", "Prove Work", "Deploy", "Repeat"],
-    "protocols": {
-        "sentinel_audit": "Required prior to reading skills registry.",
-        "architecture": "Reusable components over single-use bots"
-    }
-}
+### Database
+- ✅ **SQLite** - Development (zero setup)
+- ✅ **PostgreSQL** - Production (scalable)
+- ✅ **Alembic Migrations** - Version-controlled schema changes
+- ✅ **Audit Tables** - Immutable event logs
+- ✅ **Claim Timeline Tables** - Event-sourced claim history
 
-def verify_sentinel_audit(node_id):
-    # Simulated Sentinel handshake verification
-    print(f"[Sentinel] Auditing node {node_id}...")
-    audit_passed = True  # Set based on telemetry check
-    if audit_passed:
-        print(f"[Sentinel] Node {node_id} passed security compliance.")
-        return True
-    else:
-        print(f"[Sentinel] Audit failed for node {node_id}.")
-        return False
+### Deployment
+- ✅ **Docker Compose** - Local development with PostgreSQL
+- ✅ **Dockerfile** - Container image for any cloud
+- ✅ **Render Config** - One-click deploy to Render.com
+- ✅ **Cloud Run Config** - GCP deployment manifest
+- ✅ **Environment Config** - .env-based configuration
 
-def load_skills(node_id):
-    if verify_sentinel_audit(node_id):
-        print(f"[Node {node_id}] Ingesting Skills.md protocol...")
-        print(json.dumps(SKILLS_REGISTRY, indent=4))
-        print(f"[Node {node_id}] Ready for deployment cycle: Test -> Prove -> Deploy -> Repeat.")
-    else:
-        print(f"[Node {node_id}] Initialization halted due to failed audit.")
-        sys.exit(1)
+## 📋 Quick Start
 
-if __name__ == "__main__":
-    target_node_id = os.getenv("SPAWNED_NODE_ID", "NODE-001")
-    load_skills(target_node_id)
-cat << 'EOF' > README.md
-# LEGARE123 MISSION OF PROSPERITY (DE JURE MISSION)
-## Sentinel Ecosystem — Open Source Reference Architecture
+### Backend Setup
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
 
-**Version:** 1.0.0  
-**Design Principle:** PROF BEFORE CLAIM / Separation of Evidence from Motive  
+API available at: http://localhost:8000
+Docs: http://localhost:8000/docs
 
----
+### Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-## Overview
-Provider-neutral orchestration and evidence-control layer for human-in-the-loop multi-agent ecosystems, secured via kernel-level runtime isolation and hardware-backed telemetry.
+UI available at: http://localhost:5173
 
-## Runtime Security Architecture & NVIDIA OpenShell Integration
-This repository utilizes **NVIDIA OpenShell** and **NVIDIA Sentry** to enforce strict, sandboxed, and policy-governed execution of our stewardship and compliance frameworks:
-* **Kernel-Level Sandboxing:** Enforces Landlock isolation (`best_effort`), ensuring container workloads operate with a read-only root filesystem and explicitly bounded writable volumes (`/app/examples`, `/tmp`).
-* **Air-Gapped Network Control:** Zero external network exposure during institutional ledger processing.
-* **Out-of-Band Behavioral Auditing:** In-silicon telemetry via BlueField data processing units (DPUs) for millisecond-level quarantine capability and verifiable security records.
+### With Docker Compose (PostgreSQL)
+```bash
+docker-compose up --build
+```
 
-## Repository Structure
-* `TECHNICAL_COMPLIANCE_RECORD.md`: Formal technical compliance and verification matrix.
-* `openshell-config/policy.yaml`: Runtime sandbox policy definitions.
-* `Dockerfile`: OCI-compliant container configuration embedding OpenShell controls.
-* `.github/workflows/publish-container.yml`: Automated CI/CD pipeline publishing secure packages to `ghcr.io`.
+API: http://localhost:8000
+PostgreSQL: localhost:5432
 
-## License
-MIT License
-EOF
+## 🔐 Authentication & Authorization
 
-# Commit and push the README update
-git add README.md
-git commit -m "Update: Enhance README with NVIDIA OpenShell & Sentinel security documentation"
-git push origin main
-# LEGARE123 MISSION OF PROSPERITY (DE JURE MISSION)
-## Sentinel Ecosystem — 2027 Nanotech & Spatial XR Reference Architecture
+### Default Seeded Users
+- Admin: `admin` / `admin`
+- Operator: `operator` / `operator`
+- Viewer: `viewer` / `viewer`
 
-**Version:** 1.2.0 (Integrated Community & Nanotech Spatial Branch)  
-**Design Principle:** PROOF BEFORE CLAIM / Absolute Separation of Evidence from Motive  
+### Login Flow
+1. User submits username/password to `/api/v1/auth/token`
+2. API validates credentials and returns JWT token
+3. Frontend stores token in localStorage
+4. All subsequent requests include token in `Authorization: Bearer <token>` header
+5. Backend validates token and enforces role-based access
 
----
+### Role Permissions
 
-## Overview
-Provider-neutral stewardship and evidence-control framework optimized for the 2027 post-smartphone paradigm. This ecosystem integrates physical community infrastructure, self-powering nanotech energy-harvesting textiles, neural-muscle bio-telemetry, and air-gapped optical HUD projections (Android-XR, Meta, and Apple medical-grade optical frameworks).
+#### Admin
+- Register new users
+- Manage all agents, evidence, and claims
+- Access audit logs
+- Configure policies and permissions
 
-## Core Architectural Layers
+#### Operator
+- Register agents
+- Submit and verify evidence
+- Evaluate claims against evidence
+- View audit logs for transparency
 
-1. **Community & Stewardship Infrastructure**:
-   * Grounded in neighborhood food security, local public safety coordination, and sustainable workforce development programs across Philadelphia.
-   * Leverages automated data hygiene and zero-network-leakage container policies to protect public welfare telemetry.
+#### Viewer
+- Read-only access to all resources
+- Cannot create or modify anything
+- Can view claim timelines and evidence trails
 
-2. **Nanotech Smart Textiles Layer**:
-   * **Energy Harvesting**: Piezoelectric and thermoelectric yarn matrices harvest clean electrical energy from natural human movement, walking, and body heat, eliminating reliance on rigid external battery packs.
-   * **Bio-Telemetry Sensing**: Soft, conductive electrodes embedded directly into garments capture continuous, non-invasive health data (neural-muscle activity, core temperature, and respiration rates) without the discomfort of traditional hardware trackers.
+## 📊 Database Schema
 
-3. **Pocket-Compute Host**:
-   * Shifts execution away from traditional handheld touchscreens to secure, pocket-bound compute devices.
-   * Governed by **NVIDIA OpenShell** container policies using strict Landlock kernel isolation (`best_effort`), enforcing read-only system boundaries (`/bin`, `/usr`, `/lib`, `/etc`) while ensuring zero external network leakage (`network_policies: []`).
+### Users
+```sql
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR UNIQUE NOT NULL,
+    hashed_password VARCHAR NOT NULL,
+    role ENUM('admin', 'operator', 'viewer'),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP
+);
+```
 
-4. **Optical Display Edge**:
-   * Eliminates physical screens by streaming encrypted sensor proofs, health metrics, and spatial workspace nodes (`/spatial/hologram-nodes`) directly into lightweight smart glasses or medical-grade AR lenses.
+### Audit Logs
+```sql
+CREATE TABLE audit_logs (
+    id SERIAL PRIMARY KEY,
+    action VARCHAR NOT NULL,
+    actor VARCHAR NOT NULL,
+    target VARCHAR,
+    details TEXT,
+    timestamp TIMESTAMP
+);
+```
 
-## Repository Structure
-* `TECHNICAL_COMPLIANCE_RECORD.md`: Formal verification matrix, 90-day stress simulation metrics, and 2027 upgrade specifications.
-* `openshell-config/spatial-xr/policy-spatial-xr.yaml`: Runtime sandbox security policy for optical XR and textile frameworks.
-* `src/biometrics/sensor_bridge.py`: Local execution module for streaming sensory and neural fabric data.
-* `Dockerfile`: OCI-compliant container configuration with spatial and biometric volume mounts.
-* `.github/workflows/publish-container.yml`: Automated CI/CD pipeline publishing to `ghcr.io`.
+### Claim Audit Logs (Timeline)
+```sql
+CREATE TABLE claim_audit_logs (
+    id SERIAL PRIMARY KEY,
+    claim_id VARCHAR NOT NULL,
+    action VARCHAR NOT NULL,
+    actor VARCHAR NOT NULL,
+    details TEXT,
+    created_at TIMESTAMP
+);
+```
 
-## License
-MIT License
+## 🔄 API Endpoints
+
+### Authentication
+- `POST /api/v1/auth/token` - Login (username/password)
+- `POST /api/v1/auth/register` - Create new user (admin only)
+- `GET /api/v1/auth/me` - Get current user info
+
+### Agents
+- `POST /api/v1/agents` - Register agent (admin/operator)
+- `GET /api/v1/agents` - List agents (all)
+- `GET /api/v1/agents/{id}` - Get agent (all)
+- `PATCH /api/v1/agents/{id}` - Update agent (admin/operator)
+- `POST /api/v1/agents/{id}/activate` - Activate agent (admin/operator)
+- `POST /api/v1/agents/{id}/pause` - Pause agent (admin/operator)
+
+### Evidence
+- `POST /api/v1/evidence` - Submit evidence (admin/operator)
+- `GET /api/v1/evidence` - List evidence (all)
+- `GET /api/v1/evidence/{id}` - Get evidence (all)
+- `POST /api/v1/evidence/{id}/verify` - Verify evidence (admin/operator)
+- `POST /api/v1/evidence/{id}/reject` - Reject evidence (admin/operator)
+- `PATCH /api/v1/evidence/{id}` - Update evidence (admin/operator)
+
+### Claims
+- `POST /api/v1/claims/evaluate` - Evaluate claim (admin/operator)
+- `GET /api/v1/claims` - List claims (all)
+- `GET /api/v1/claims/{id}` - Get claim (all)
+- `GET /api/v1/claims/{id}/timeline` - Get claim timeline (all)
+- `POST /api/v1/claims/{id}/archive` - Archive claim (admin/operator)
+
+### Audit
+- `GET /api/v1/audit` - List audit logs (admin/operator)
+
+## 📈 Production Deployment
+
+### Render.com
+```bash
+git push origin scaffold/core-framework
+# Connect your Render account and deploy with render.yaml
+```
+
+### Google Cloud Run
+```bash
+docker build -t gcr.io/YOUR_PROJECT/legare123:latest .
+docker push gcr.io/YOUR_PROJECT/legare123:latest
+kubectl apply -f deployment/cloudrun.yaml
+```
+
+### Environment Variables
+```
+APP_NAME=LEGARE123
+ENVIRONMENT=production
+DATABASE_URL=postgresql://user:pass@host:5432/legare
+JWT_SECRET=<generate-secure-key>
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+CORS_ORIGINS=https://yourdomain.com
+```
+
+## 🧪 Testing
+
+```bash
+pytest tests/ -v
+```
+
+## 📚 Documentation
+
+- [RBAC Guide](docs/RBAC_GUIDE.md) - Role-based access control and permissions
+- [PostgreSQL Migration](docs/POSTGRES_MIGRATION.md) - Migrate from SQLite to PostgreSQL
+
+## 📄 License
+
+MIT
+
+## 🤝 Contributing
+
+Contributions welcome. Please ensure tests pass and follow the code style.
