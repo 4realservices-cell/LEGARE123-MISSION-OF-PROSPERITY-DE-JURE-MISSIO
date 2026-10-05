@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine, Column, String, Boolean, DateTime, JSON, Enum as SQLEnum, Integer, Text, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime
 from app.config import settings
 from app.models import AgentStatus, EvidenceStatus, ClaimStatus, UserRole
@@ -99,9 +98,6 @@ class ClaimAuditLogDB(Base):
     actor = Column(String, nullable=False)
     details = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-
-
-Base.metadata.create_all(bind=engine)
 
 
 def get_db():
