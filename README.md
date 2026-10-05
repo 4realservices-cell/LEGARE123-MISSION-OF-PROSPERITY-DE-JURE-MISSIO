@@ -217,3 +217,172 @@ MIT
 ## 🤝 Contributing
 
 Contributions welcome. Please ensure tests pass and follow the code style.
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+export default function SentinelDashboard() {
+  const [biometrics, setBiometrics] = useState([]);
+  const [anchors, setAnchors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [wsConnected, setWsConnected] = useState(false);
+  const [error, setError] = useState(null);
+
+  const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000/api/v1/sentinel";
+  const WS_URL = process.env.REACT_APP_WS_URL || "ws://localhost:8000/api/v1/sentinel/ws";
+
+  // Initial REST fetch for data hydration
+  useEffect(() => {
+    async function hydrateData() {
+      try {
+        setLoading(true);
+        const [bioRes, anchorRes] = await Promise.all([
+          axios.get(`${API_BASE}/biometrics/streams`),
+          axios.get(`${API_BASE}/spatial-xr/anchors`)
+        ]);
+        setBiometrics(bioRes.data);
+        setAnchors(anchorRes.data);
+        setError(null);
+      } catch (err) {
+        setError("Failed to synchronize initial telemetry feeds via REST.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    hydrateData();
+  }, [API_BASE]);
+
+  // WebSocket connection for real-time telemetry streaming
+  useEffect(() => {
+    let socket;
+    let reconnectTimer;
+
+    function connectWebSocket() {
+      socket = new WebSocket(WS_URL);
+
+      socket.onopen = () => {
+        setWsConnected(true);
+      };
+
+      socket.onmessage = (event) => {
+        try {
+          const packet = JSON.parse(event.data);
+          if (packet.type === 'BIOMETRIC_UPDATE') {
+            setBiometrics((prev) => [packet.data, ...prev.slice(0, 49)]);
+          } else if (packet.type === 'ANCHOR_UPDATE') {
+            setAnchors((prev) => [packet.data, ...prev.slice(0, 49)]);
+          }
+        } catch (e) {
+          console.error("Malformed telemetry packet received:", e);
+        }
+      };
+
+      socket.onerror = () => {
+        setWsConnected(false);
+      };
+
+      socket.onclose = () => {
+        setWsConnected(false);
+        // Attempt reconnection after 5 seconds
+        reconnectTimer = setTimeout(connectWebSocket, 5000);
+      };
+    }
+
+    connectWebSocket();
+
+    return () => {
+      if (socket) socket.close();
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+    };
+  }, [WS_URL]);
+
+  if (loading && biometrics.length === 0) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-950 text-cyan-400 font-mono">
+        Initializing Sentinel Telemetry Matrix...
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 bg-slate-950 text-slate-100 min-h-screen">
+      {/* Header with Live Status Indicator */}
+      <header className="mb-8 border-b border-slate-800 pb-4 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold tracking-wider text-cyan-400">SENTINEL ECOSYSTEM v1.2.0</h1>
+          <p className="text-sm text-slate-400">Proof Before Claim — Real-Time Command & Telemetry Matrix</p>
+        </div>
+        <div className="flex items-center space-x-2 bg-slate-900 px-3 py-1.5 rounded-full border border-slate-800">
+          <span className={`h-2.5 w-2.5 rounded-full animate-pulse ${wsConnected ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+          <span className="text-xs font-mono text-slate-300">
+            {wsConnected ? 'WS Stream Active' : 'Polling / Reconnecting'}
+          </span>
+        </div>
+      </header>
+
+      {error && (
+        <div className="mb-6 p-4 bg-red-950/50 border border-red-800 text-red-300 rounded-lg text-sm">
+          {error}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Biometric Telemetry Panel */}
+        <section className="bg-slate-900 border border-slate-800 rounded-lg p-5 shadow-xl">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-emerald-400">Biometric Telemetry Streams</h2>
+            <span className="text-xs font-mono bg-emerald-950 text-emerald-300 px-2.5 py-1 rounded border border-emerald-800">
+              {biometrics.length} Records
+            </span>
+          </div>
+          <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+            {biometrics.length === 0 ? (
+              <p className="text-sm text-slate-500 text-center py-8">No biometric streams recorded yet.</p>
+            ) : (
+              biometrics.map((item) => (
+                <div key={item.telemetry_id} className="p-3.5 bg-slate-950 rounded-md border border-slate-800 flex justify-between items-center transition hover:border-slate-700">
+                  <div>
+                    <p className="font-mono text-xs text-cyan-300">{item.telemetry_id}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">Agent: {item.agent_id}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-xs px-2.5 py-1 rounded font-mono ${item.verified ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}`}>
+                      Score: {Number(item.trust_score).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+
+        {/* Spatial XR Anchors Panel */}
+        <section className="bg-slate-900 border border-slate-800 rounded-lg p-5 shadow-xl">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-purple-400">Spatial XR Anchors</h2>
+            <span className="text-xs font-mono bg-purple-950 text-purple-300 px-2.5 py-1 rounded border border-purple-800">
+              {anchors.length} Anchors
+            </span>
+          </div>
+          <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+            {anchors.length === 0 ? (
+              <p className="text-sm text-slate-500 text-center py-8">No spatial anchors detected.</p>
+            ) : (
+              anchors.map((anchor) => (
+                <div key={anchor.anchor_id} className="p-3.5 bg-slate-950 rounded-md border border-slate-800 flex justify-between items-center transition hover:border-slate-700">
+                  <div>
+                    <p className="font-mono text-xs text-purple-300">{anchor.anchor_id}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">Session: {anchor.session_id}</p>
+                  </div>
+                  <div className="text-right font-mono text-xs text-slate-300 bg-slate-900 px-2 py-1 rounded border border-slate-800">
+                    X: {anchor.coordinate_vector?.x ?? 0} | Y: {anchor.coordinate_vector?.y ?? 0} | Z: {anchor.coordinate_vector?.z ?? 0}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
