@@ -1,175 +1,219 @@
-# Legare123 Mission of Prosperity - De Jure Mission API
+# LEGARE123 Mission of Prosperity - Complete Enterprise Edition
 
-A complete, production-ready Python framework for human-in-the-loop evidence orchestration and claim validation, built on the principle of **"Proof Before Claim."**
+A production-ready, full-stack Python + React framework for human-in-the-loop evidence orchestration and claim validation, built on the principle of **"Proof Before Claim."**
 
-## Key Features
+## 🚀 Complete Feature Set
 
-### 1. **SQLite Persistence**
-- Full database persistence with SQLAlchemy ORM
-- Automatic schema generation and seeding on startup
-- Support for agents, evidence, claims, and workflows
+### Backend (Python/FastAPI)
+- ✅ **JWT Authentication** - Secure token-based auth with bcrypt password hashing
+- ✅ **Role-Based Access Control (RBAC)** - Admin, Operator, Viewer roles with fine-grained permissions
+- ✅ **Audit Logging** - Immutable audit trail for compliance and security
+- ✅ **Claim Timeline** - Complete event history for each claim
+- ✅ **Evidence Management** - Verification pipeline with status tracking
+- ✅ **Agent Lifecycle** - Registration, activation, pause, retirement
+- ✅ **Workflow Engine** - Multi-step approval workflows
+- ✅ **Database Agnostic** - SQLite for dev, PostgreSQL for production
+- ✅ **API Documentation** - Auto-generated OpenAPI/Swagger docs
 
-### 2. **Agent Lifecycle Management**
-- Register, activate, pause, and retire agents
-- Agent capabilities tracking
-- Role-based access control support
-- Agent status transitions (registered → active → paused → retired)
+### Frontend (React + Vite)
+- ✅ **Secure Login** - JWT token management and session persistence
+- ✅ **Protected Routes** - Role-based access to UI components
+- ✅ **Dashboard** - Real-time system overview and metrics
+- ✅ **Claim Timeline UI** - Visual event history with actor tracking
+- ✅ **Evidence Management** - Browse, filter, and manage evidence
+- ✅ **Agent Management** - View and manage agent lifecycles
+- ✅ **Permissions Panel** - Role and permission documentation
+- ✅ **Responsive Design** - Works on desktop and mobile
 
-### 3. **Evidence Verification Pipeline**
-- Submit evidence with metadata (source, content, tags)
-- Verify evidence through designated verifiers
-- Track evidence lineage and verification chain
-- Evidence status tracking (pending → verified → rejected → archived)
+### Database
+- ✅ **SQLite** - Development (zero setup)
+- ✅ **PostgreSQL** - Production (scalable)
+- ✅ **Alembic Migrations** - Version-controlled schema changes
+- ✅ **Audit Tables** - Immutable event logs
+- ✅ **Claim Timeline Tables** - Event-sourced claim history
 
-### 4. **Proof-Before-Claim Enforcement**
-- Core validation logic that rejects unverified evidence
-- Claims can only be approved if ALL required evidence is verified
-- Claim status transitions (submitted → under_review → approved/rejected → archived)
+### Deployment
+- ✅ **Docker Compose** - Local development with PostgreSQL
+- ✅ **Dockerfile** - Container image for any cloud
+- ✅ **Render Config** - One-click deploy to Render.com
+- ✅ **Cloud Run Config** - GCP deployment manifest
+- ✅ **Environment Config** - .env-based configuration
 
-### 5. **Admin Dashboard**
-- Real-time web dashboard at `/admin`
-- System overview with metrics
-- Agent management interface
-- Evidence and claim tracking
-- Live data refresh every 30 seconds
+## 📋 Quick Start
 
-### 6. **Workflow Management**
-- Predefined workflow templates
-- Multi-step claim approval workflows
-- Emergency override workflows
-- Extensible workflow engine
-
-## Installation & Setup
-
+### Backend Setup
 ```bash
-# Clone the repo
-git clone https://github.com/4realservices-cell/LEGARE123-MISSION-OF-PROSPERITY-DE-JURE-MISSIO.git
-cd LEGARE123-MISSION-OF-PROSPERITY-DE-JURE-MISSIO
-
-# Create virtual environment
 python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install dependencies
+source .venv/bin/activate
 pip install -r requirements.txt
-
-# Run the server
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn app.main:app --reload
 ```
 
-## Running Tests
+API available at: http://localhost:8000
+Docs: http://localhost:8000/docs
+
+### Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+UI available at: http://localhost:5173
+
+### With Docker Compose (PostgreSQL)
+```bash
+docker-compose up --build
+```
+
+API: http://localhost:8000
+PostgreSQL: localhost:5432
+
+## 🔐 Authentication & Authorization
+
+### Default Seeded Users
+- Admin: `admin` / `admin`
+- Operator: `operator` / `operator`
+- Viewer: `viewer` / `viewer`
+
+### Login Flow
+1. User submits username/password to `/api/v1/auth/token`
+2. API validates credentials and returns JWT token
+3. Frontend stores token in localStorage
+4. All subsequent requests include token in `Authorization: Bearer <token>` header
+5. Backend validates token and enforces role-based access
+
+### Role Permissions
+
+#### Admin
+- Register new users
+- Manage all agents, evidence, and claims
+- Access audit logs
+- Configure policies and permissions
+
+#### Operator
+- Register agents
+- Submit and verify evidence
+- Evaluate claims against evidence
+- View audit logs for transparency
+
+#### Viewer
+- Read-only access to all resources
+- Cannot create or modify anything
+- Can view claim timelines and evidence trails
+
+## 📊 Database Schema
+
+### Users
+```sql
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR UNIQUE NOT NULL,
+    hashed_password VARCHAR NOT NULL,
+    role ENUM('admin', 'operator', 'viewer'),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP
+);
+```
+
+### Audit Logs
+```sql
+CREATE TABLE audit_logs (
+    id SERIAL PRIMARY KEY,
+    action VARCHAR NOT NULL,
+    actor VARCHAR NOT NULL,
+    target VARCHAR,
+    details TEXT,
+    timestamp TIMESTAMP
+);
+```
+
+### Claim Audit Logs (Timeline)
+```sql
+CREATE TABLE claim_audit_logs (
+    id SERIAL PRIMARY KEY,
+    claim_id VARCHAR NOT NULL,
+    action VARCHAR NOT NULL,
+    actor VARCHAR NOT NULL,
+    details TEXT,
+    created_at TIMESTAMP
+);
+```
+
+## 🔄 API Endpoints
+
+### Authentication
+- `POST /api/v1/auth/token` - Login (username/password)
+- `POST /api/v1/auth/register` - Create new user (admin only)
+- `GET /api/v1/auth/me` - Get current user info
+
+### Agents
+- `POST /api/v1/agents` - Register agent (admin/operator)
+- `GET /api/v1/agents` - List agents (all)
+- `GET /api/v1/agents/{id}` - Get agent (all)
+- `PATCH /api/v1/agents/{id}` - Update agent (admin/operator)
+- `POST /api/v1/agents/{id}/activate` - Activate agent (admin/operator)
+- `POST /api/v1/agents/{id}/pause` - Pause agent (admin/operator)
+
+### Evidence
+- `POST /api/v1/evidence` - Submit evidence (admin/operator)
+- `GET /api/v1/evidence` - List evidence (all)
+- `GET /api/v1/evidence/{id}` - Get evidence (all)
+- `POST /api/v1/evidence/{id}/verify` - Verify evidence (admin/operator)
+- `POST /api/v1/evidence/{id}/reject` - Reject evidence (admin/operator)
+- `PATCH /api/v1/evidence/{id}` - Update evidence (admin/operator)
+
+### Claims
+- `POST /api/v1/claims/evaluate` - Evaluate claim (admin/operator)
+- `GET /api/v1/claims` - List claims (all)
+- `GET /api/v1/claims/{id}` - Get claim (all)
+- `GET /api/v1/claims/{id}/timeline` - Get claim timeline (all)
+- `POST /api/v1/claims/{id}/archive` - Archive claim (admin/operator)
+
+### Audit
+- `GET /api/v1/audit` - List audit logs (admin/operator)
+
+## 📈 Production Deployment
+
+### Render.com
+```bash
+git push origin scaffold/core-framework
+# Connect your Render account and deploy with render.yaml
+```
+
+### Google Cloud Run
+```bash
+docker build -t gcr.io/YOUR_PROJECT/legare123:latest .
+docker push gcr.io/YOUR_PROJECT/legare123:latest
+kubectl apply -f deployment/cloudrun.yaml
+```
+
+### Environment Variables
+```
+APP_NAME=LEGARE123
+ENVIRONMENT=production
+DATABASE_URL=postgresql://user:pass@host:5432/legare
+JWT_SECRET=<generate-secure-key>
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+CORS_ORIGINS=https://yourdomain.com
+```
+
+## 🧪 Testing
 
 ```bash
 pytest tests/ -v
 ```
 
-## API Endpoints
+## 📚 Documentation
 
-### Health & Status
-- `GET /health` - Health check
-- `GET /readiness` - Readiness probe
-- `GET /admin` - Admin dashboard (HTML)
+- [RBAC Guide](docs/RBAC_GUIDE.md) - Role-based access control and permissions
+- [PostgreSQL Migration](docs/POSTGRES_MIGRATION.md) - Migrate from SQLite to PostgreSQL
 
-### Agents
-- `POST /api/v1/agents` - Register new agent
-- `GET /api/v1/agents` - List all agents
-- `GET /api/v1/agents/{agent_id}` - Get agent details
-- `PATCH /api/v1/agents/{agent_id}` - Update agent
-- `POST /api/v1/agents/{agent_id}/activate` - Activate agent
-- `POST /api/v1/agents/{agent_id}/pause` - Pause agent
+## 📄 License
 
-### Evidence
-- `POST /api/v1/evidence` - Submit evidence
-- `GET /api/v1/evidence` - List all evidence
-- `GET /api/v1/evidence/{evidence_id}` - Get evidence details
-- `POST /api/v1/evidence/{evidence_id}/verify` - Verify evidence
-- `POST /api/v1/evidence/{evidence_id}/reject` - Reject evidence
-- `PATCH /api/v1/evidence/{evidence_id}` - Update evidence
-
-### Claims (Proof Before Claim)
-- `POST /api/v1/claims/evaluate` - Submit and evaluate claim
-- `GET /api/v1/claims` - List all claims
-- `GET /api/v1/claims/{claim_id}` - Get claim details
-- `POST /api/v1/claims/{claim_id}/archive` - Archive claim
-
-### Workflows
-- `GET /api/v1/workflows` - List all workflows
-- `GET /api/v1/workflows/{workflow_id}` - Get workflow details
-
-## Example: Submit & Evaluate a Claim
-
-```bash
-# 1. View seeded evidence
-curl http://localhost:8000/api/v1/evidence
-
-# 2. Submit a claim with verified evidence (will be approved)
-curl -X POST http://localhost:8000/api/v1/claims/evaluate \
-  -H "Content-Type: application/json" \
-  -d '{
-    "claim_id": "claim-001",
-    "statement": "System audit shows no critical defects.",
-    "required_evidence_ids": ["ev-system-audit-001"],
-    "submitted_by": "user-123"
-  }'
-
-# 3. Submit a claim with unverified evidence (will be rejected)
-curl -X POST http://localhost:8000/api/v1/claims/evaluate \
-  -H "Content-Type: application/json" \
-  -d '{
-    "claim_id": "claim-002",
-    "statement": "System is secure.",
-    "required_evidence_ids": ["ev-security-scan-001"],
-    "submitted_by": "user-123"
-  }'
-```
-
-## Database Schema
-
-### Agents Table
-- `agent_id` (PK): Unique identifier
-- `name`, `role`, `status`, `description`
-- `capabilities`: JSON array
-- `created_at`, `updated_at`: Timestamps
-
-### Evidence Table
-- `evidence_id` (PK): Unique identifier
-- `source`, `content`: Evidence data
-- `verified`, `status`: Verification state
-- `submitted_by`, `verified_by`: User references
-- `tags`: JSON array for categorization
-- `created_at`, `updated_at`: Timestamps
-
-### Claims Table
-- `claim_id` (PK): Unique identifier
-- `statement`: Claim text
-- `status`, `approved`: Claim state
-- `reason`: Evaluation reason
-- `required_evidence_ids`: JSON array
-- `submitted_by`, `evaluated_by`: User references
-- `created_at`, `evaluated_at`: Timestamps
-
-### Workflows Table
-- `workflow_id` (PK): Unique identifier
-- `name`, `description`: Workflow metadata
-- `steps`: JSON array of workflow steps
-- `created_at`, `updated_at`: Timestamps
-
-## Seeded Sample Data
-
-The application automatically seeds with:
-- **3 agents**: Sentinel Audit, Evidence Orchestrator, Human Oversight
-- **3 evidence items**: System audit (verified), telemetry (verified), security scan (pending)
-- **2 workflows**: Standard claim approval, emergency override
-
-## Docker Deployment
-
-```bash
-# Build container
-docker build -t legare123:latest .
-
-# Run container
-docker run -p 8000:8000 -e ENVIRONMENT=production legare123:latest
-```
-
-## License
 MIT
+
+## 🤝 Contributing
+
+Contributions welcome. Please ensure tests pass and follow the code style.
