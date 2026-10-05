@@ -26,6 +26,12 @@ class ClaimStatus(str, Enum):
     ARCHIVED = "archived"
 
 
+class UserRole(str, Enum):
+    ADMIN = "admin"
+    OPERATOR = "operator"
+    VIEWER = "viewer"
+
+
 class AgentRegistration(BaseModel):
     agent_id: str
     name: str
@@ -98,6 +104,49 @@ class WorkflowTemplate(BaseModel):
     description: str
     steps: List[WorkflowStep]
     created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
+    role: UserRole = UserRole.VIEWER
+
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+
+class UserOut(BaseModel):
+    id: int
+    username: str
+    role: UserRole
+    is_active: bool = True
+
+    class Config:
+        from_attributes = True
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
+    role: Optional[str] = None
+
+
+class AuditLogEntry(BaseModel):
+    id: int
+    action: str
+    actor: str
+    target: Optional[str] = None
+    details: Optional[str] = None
+    timestamp: datetime
 
     class Config:
         from_attributes = True
