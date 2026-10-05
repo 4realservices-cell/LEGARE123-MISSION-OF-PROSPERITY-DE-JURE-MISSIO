@@ -1,19 +1,25 @@
-from pydantic import BaseModel, Field
-from typing import List, Optional
+from pydantic import BaseModel
+from typing import List
 
-
-class AgentRecord(BaseModel):
-    id: str
+class AgentRegistration(BaseModel):
+    agent_id: str
     name: str
     role: str
     status: str = "active"
-    description: str
 
+class EvidenceItem(BaseModel):
+    evidence_id: str
+    source: str
+    content: str
+    verified: bool = False
 
-class ClaimSubmission(BaseModel):
-    claim: str = Field(..., min_length=1)
-    evidence: List[str] = Field(default_factory=list)
-    agent_id: Optional[str] = None
+class ClaimEvaluationRequest(BaseModel):
+    claim_id: str
+    statement: str
+    required_evidence_ids: List[str]
 
-    class Config:
-        orm_mode = True
+class ClaimEvaluationResponse(BaseModel):
+    claim_id: str
+    statement: str
+    approved: bool
+    reason: str

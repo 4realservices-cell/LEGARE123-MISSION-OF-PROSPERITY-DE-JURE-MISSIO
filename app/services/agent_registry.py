@@ -1,39 +1,18 @@
-from app.models import AgentRecord
+from typing import Dict, List, Optional
+from app.models import AgentRegistration
 
+class AgentRegistryService:
+    def __init__(self):
+        self._agents: Dict[str, AgentRegistration] = {}
 
-AGENT_REGISTRY = [
-    AgentRecord(
-        id="sentinel-audit",
-        name="Sentinel Audit",
-        role="Security verifier",
-        status="active",
-        description="Validates evidence integrity, risk state, and operational compliance.",
-    ),
-    AgentRecord(
-        id="evidence-orchestrator",
-        name="Evidence Orchestrator",
-        role="Evidence manager",
-        status="active",
-        description="Coordinates claim checks, evidence collection, and traceability.",
-    ),
-    AgentRecord(
-        id="human-oversight",
-        name="Human Oversight",
-        role="Governance reviewer",
-        status="ready",
-        description="Reviews exceptional scenarios and approves final interventions when needed.",
-    ),
-]
+    def register_agent(self, agent: AgentRegistration) -> AgentRegistration:
+        self._agents[agent.agent_id] = agent
+        return agent
 
+    def get_agent(self, agent_id: str) -> Optional[AgentRegistration]:
+        return self._agents.get(agent_id)
 
-def list_agents() -> list[dict]:
-    return [agent.model_dump() for agent in AGENT_REGISTRY]
+    def list_agents(self) -> List[AgentRegistration]:
+        return list(self._agents.values())
 
-
-def get_agent(agent_id: str | None) -> AgentRecord | None:
-    if not agent_id:
-        return None
-    for agent in AGENT_REGISTRY:
-        if agent.id == agent_id:
-            return agent
-    return None
+agent_registry = AgentRegistryService()
