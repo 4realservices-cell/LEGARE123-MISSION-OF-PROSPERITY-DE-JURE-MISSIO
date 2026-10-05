@@ -28,6 +28,7 @@ from app.services.workflow_service import WorkflowService
 from app.services.audit_service import audit_service
 from app.services.user_service import UserService
 from app.auth import authenticate_user, create_access_token, get_current_user, require_roles, get_password_hash
+from app.routers.domain import router as sentinel_domain_router
 
 app = FastAPI(
     title=settings.app_name,
@@ -44,8 +45,7 @@ app.add_middleware(
 )
 
 configure_app(app)
-
-Base.metadata.create_all(bind=engine)
+app.include_router(sentinel_domain_router)
 
 
 @app.on_event("startup")

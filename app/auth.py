@@ -68,3 +68,15 @@ def require_roles(*allowed_roles):
         return current_user
 
     return role_checker
+
+
+def verify_role(required_role: str):
+    def role_checker(current_user=Depends(get_current_user)):
+        if current_user.role.value != required_role and current_user.role.value != UserRole.ADMIN.value:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Role '{required_role}' required",
+            )
+        return current_user
+
+    return role_checker
