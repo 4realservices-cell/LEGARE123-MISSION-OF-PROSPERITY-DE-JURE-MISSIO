@@ -1,7 +1,9 @@
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, validator
+from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -138,3 +140,20 @@ def register_spatial_anchor(
         "verified": anchor.verified,
         "message": "Spatial XR anchor verified and anchored successfully.",
     }
+
+
+@router.get("/health/readiness")
+def sentinel_readiness_probe(db: Session = Depends(get_db)):
+    """Readiness probe verifying live DB connection, under the sentinel surface.
+
+    Returns 200 with {"status": "ready", ...} when the database answers a
+    lightweight SELECT 1, and a real 503 (via JSONResponse) when it does not.
+    """
+    try:
+        db.execute(text("SELECT 1"))
+        return {"status": "ready", "database": "connected"}
+    except Exception as e:
+        return JSONResponse(
+            status_code=503,
+            content={"status": "unhealthy", "database": "disconnected", "error": str(e)},
+        )

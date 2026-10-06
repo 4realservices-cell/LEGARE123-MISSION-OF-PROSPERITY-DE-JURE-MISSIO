@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from datetime import datetime
 
 from app.enums import AgentStatus, ClaimStatus, EvidenceStatus, UserRole
@@ -123,3 +123,43 @@ class AuditLogEntry(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class SpatialXREnterAnchor(BaseModel):
+    """Client payload for registering a world-locked spatial XR anchor.
+
+    Provided 2026-10-05; migrated to Pydantic v2 length constraints
+    (min_length/max_length supersede the v1 min_items/max_items kwargs).
+    """
+
+    anchor_id: str = Field(..., description="Unique identifier for the spatial XR anchor")
+    spatial_coordinates: List[float] = Field(
+        ...,
+        min_length=3,
+        max_length=3,
+        description="3D coordinate array [X, Y, Z] representing world-locked positioning",
+    )
+
+    def to_coordinate_vector(self) -> Dict[str, float]:
+        """Map [X, Y, Z] to the dict shape stored by SpatialXRAnchorModel."""
+        x, y, z = self.spatial_coordinates
+        return {"x": x, "y": y, "z": z}
+
+
+class BiometricIngestPayload(BaseModel):
+    """Client payload carrying one biometric reading from a device.
+
+    Provided 2026-10-05. `timestamp` is typed as datetime so the documented
+    ISO-8601 format is actually validated on ingest.
+    """
+
+    device_id: str = Field(..., description="Unique hardware or sensor identifier")
+    timestamp: datetime = Field(..., description="ISO-8601 timestamp of the biometric reading")
+    metrics: Dict[str, Any] = Field(
+        ...,
+        description="Key-value pairs of biometric readings (e.g., heart rate, galvanic skin response)",
+    )
+    metadata: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Additional context or environmental parameters",
+    )
